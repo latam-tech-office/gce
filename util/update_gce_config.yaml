@@ -1,0 +1,39 @@
+---
+- name: "GCE: Fetch data from Service Account and update into gce.config"
+  hosts: localhost
+  connection: local
+  vars: 
+     destination: "{{ ansible_env.PWD }}/../gce.config"
+  tasks:
+    - fail: msg="source parameter is not defined"
+      when: source is not defined
+      tags: [ always ]
+
+    - fail: msg="destination parameter is not defined"
+      when: destination is not defined
+      tags: [ always ]
+
+    - name: "Does the file {{ source }} exists ?"
+      stat: path={{ source }}
+      register: source_file
+      tags: [ always ]
+
+    - fail: msg="{{ source }} doesn't not exist"
+      when: not source_file.stat.exists
+
+    - name: "Does the file {{ destination }} exists ?"
+      stat: path={{ destination }}
+      register: destination_file
+
+    - fail: msg="{{ destination }} doesn't exist" 
+      when: not destination_file.stat.exists
+
+    - name: Reading the contents of {{ source }}
+      set_fact: service_account_file="{{ lookup('file','{{ source }}') }}"
+
+    - name: "GCE: Setting Properties" 
+      replace: dest={{ destination }} regexp="^{{ item.key }}\:" replace="{{ item.key }}{{ ':' }} {{ item.value }}" 
+      with_items: 
+         - { key: "gce_credentials_file", value: "{{ source }}" }
+         - { key: "gce_project_id", value: "{{ service_account_file.project_id }}" }
+         - { key: "gce_service_account_email", value: "{{ service_account_file.client_email }}" }
