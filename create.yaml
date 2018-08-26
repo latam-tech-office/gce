@@ -1,0 +1,9 @@
+--- 
+- name: "Creating an instance: {{ instance_name }}"
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files: 
+     - instance.config
+  roles: 
+     - { role: create }

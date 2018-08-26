@@ -1,0 +1,27 @@
+- name: "Creating disk size: {{ instance_size }}"
+  gce_pd: name={{ instance_name }} state=present zone={{ gce_zone }}
+          mode="READ_WRITE"
+          image={{ gce_image }}
+          disk_type={{ instance_disk_type }} size_gb={{ instance_size }}
+          credentials_file={{ gce_credentials_file }}
+          project_id={{ gce_project_id }} service_account_email={{ gce_service_account_email }}
+  tags: [ create, disk ]
+
+- name: "Creating Instance: {{ instance_name }}"
+  gce:
+    instance_names: "{{ instance_name }}"
+    state: "present"
+    machine_type: "{{ instance_machine }}"
+    zone: "{{ gce_zone }}"
+    network: "{{ gce_network_name }}"
+    subnetwork: "{{ gce_subnetwork_name }}"
+    tags: ["{{ gce_ssh_tag }}"]
+    disk_auto_delete: True
+    disks:
+       - name: "{{ instance_name }}"
+         mode: READ_WRITE
+    credentials_file: "{{ gce_credentials_file }}"
+    project_id: "{{ gce_project_id }}"
+    service_account_email: "{{ gce_service_account_email }}"
+  register: instance_creation
+  tags: [ create, compute ]
