@@ -1,0 +1,21 @@
+docker_storage: "/dev/sdb"
+docker_storage_partition: "{{ disk_storage }}1"
+packages:
+    - vim
+    - wget
+    - git
+    - gcc
+    - net-tools
+    - bind-utils
+    - bridge-utils
+    - bash-completion
+    - yum-utils
+    - createrepo
+    - kexec-tools
+    - sos
+    - screen
+    - python-pip
+    - atomic-openshift-clients
+    - deltarpm
+    - qemu-img
+    - azure-cli

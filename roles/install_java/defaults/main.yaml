@@ -1,0 +1,6 @@
+java_version: 8u191
+java_version_specific: {{ java_version }}-b12
+java_directory: jdk1.8.0_191
+java_url_token: 2787e4a523244c269598db4e85c51e0c
+java_file: jdk-{{ java_version }}-linux-x64.tar.gz
+java_url: http://download.oracle.com/otn-pub/java/jdk/{{ java_version_specific }}/{{ java_url_token }}/{{ java_file }}

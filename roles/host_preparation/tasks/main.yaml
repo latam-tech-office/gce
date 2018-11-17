@@ -1,0 +1,56 @@
+- name: Adding Microsoft Key Repository
+  rpm_key: key=https://packages.microsoft.com/keys/microsoft.asc state=present
+           validate_certs=False
+
+- name: Adding Microsoft Azure CLI Repository
+  yum_repository: name="azure-cli" description="Microsoft Azure CLI command line"
+                  baseurl="https://packages.microsoft.com/yumrepos/azure-cli"
+                  enabled=True
+                  gpgcheck=True gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+                  file=azure-cli
+
+- name: Adding a EPEL Repository
+  yum_repository: name="EPEL" description="EPEL Repository for Python PIP"
+                  baseurl="http://mirror.globo.com/epel/7/x86_64/"
+                  enabled=True gpgcheck=False
+
+- name: Updating the entire host (It takes a long time)
+  yum: name="*" state=latest
+
+- name: "Installing Applications"
+  yum: name="{{ item }}" state=present
+  with_items: "{{ packages }}"
+
+- name: Loading SSH KEY from localhost (if any)
+  set_fact: ssh_key="{{ lookup('file','{{ ssh_key_file }}') }}"
+  when: ssh_key_file is defined
+
+- name: Copy a SSH Key (if does exist)
+  lineinfile: dest=/root/.ssh/authorized_keys state=present create=yes line="{{ ssh_key }}"
+  when: ssh_key_file is defined
+
+- name: "Create a VG named docker-vg (used for Docker): {{ docker_storage_partition }}"
+  lvg: vg=docker-vg pvs={{ docker_storage_partition }}
+
+- name: "Removing a STORAGE_DRIVER from docker-storage-setup"
+  lineinfile: path=/etc/sysconfig/docker-storage-setup regexp="STORAGE_DRIVER" state=absent
+  ignore_errors: True
+
+- name: "Configuring Docker-Storage-Setup first"
+  lineinfile: dest=/etc/sysconfig/docker-storage-setup line="VG=docker-vg"
+
+- name: "Run a Docker-Storage-Setup"
+  command: /usr/bin/docker-storage-setup
+
+- name: "Execute a Atomic OpenShift Excluder"
+  command: atomic-openshift-excluder unexclude
+
+# https://docs.openshift.com/container-platform/latest/install_config/install/host_preparation.html#managing-docker-container-logs
+- name: "Setting Docker configuration with with the correct info"
+  lineinfile: dest=/etc/sysconfig/docker regexp="OPTIONS=.*" line="OPTIONS=\"--selinux-enabled --insecure-registry 172.30.0.0/16  --log-driver=journald\""
+
+- name: "Ensure Certified Containers can be run"
+  command: /usr/libexec/rhsmcertd-worker
+
+- name: "Ensure each host has the right hostname"
+  command: hostnamectl set-hostname {{ ansible_hostname }}

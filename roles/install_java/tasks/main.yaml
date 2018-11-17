@@ -1,0 +1,22 @@
+- name: "JDK: Creating all the necessary directory structure"
+  file: path={{ ansible_user_dir }}/java/jdk/  state=directory
+
+- name: "JDK: Download JDK 8"
+  uri: url={{ java_url }}
+       headers={"Cookie":"oraclelicense=accept-securebackup-cookie"} method=GET
+       creates=True dest={{ ansible_user_dir }}/java/jdk/{{ java_file }}
+
+- name: "JDK: Extracting JDK 8"
+  unarchive: src={{ ansible_user_dir }}/java/jdk/{{ java_file }}
+             dest={{ ansible_user_dir }}/java/jdk
+             remote_src=True
+
+- name: "JDK: Symbolic link do JDK 8"
+  file: src={{ ansible_user_dir }}/java/jdk/{{ java_directory }} state=link dest={{ ansible_user_dir }}/java/jdk/latest
+
+- name: "JDK: Deleting original file"
+  file: path={{ ansible_user_dir }}/java/jdk/{{ java_file }} state=absent
+
+- name: "JDK: Making JDK 8 wide available by defining {{ ansible_user_dir }}/.bashrc"
+  lineinfile: path={{ ansible_user_dir }}/.bashrc   regexp="^JAVA_HOME="
+              line="JAVA_HOME={{ ansible_user_dir }}/java/jdk/latest" state=present insertafter=EOF

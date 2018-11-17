@@ -1,0 +1,24 @@
+- name: "Check Parameter: redhat_subscription_username"
+  fail: msg="redhat_subscription_username is not defined or is empty"
+  when: redhat_subscription_username is not defined or redhat_subscription_username is none
+  tags: [ always ]
+
+- name: "Check Parameter: redhat_subscription_password"
+  fail: msg="redhat_subscription_password is not defined or is empty"
+  when: redhat_subscription_password is not defined or redhat_subscription_password is none
+  tags: [ always ]
+
+- name: "Check Parameter: gce_project_id"
+  fail: msg="gce_project_id is not defined or is empty"
+  when: gce_project_id is not defined or gce_project_id is none
+  tags: [ always ]
+
+- name: "Check Parameter: gce_service_account_email"
+  fail: msg="gce_service_account_email is not defined or is empty"
+  when: gce_service_account_email is not defined or gce_service_account_email is none
+  tags: [ always ]
+
+- name: "Check Parameter: gce_credentials_file"
+  fail: msg="gce_credentials_file is not defined or is empty"
+  when: gce_credentials_file is not defined or gce_credentials_file is none
+  tags: [ always ]

@@ -26,4 +26,15 @@
   register: instance_creation
   tags: [ create, compute ]
 
-- debug: var=instance_creation
+- name: Fetching Instance IP
+  set_fact: instance_public_ip={{ instance_creation.instance_data[0].public_ip }}
+
+- name: Waiting instance to be up{{ ':' }} {{ instance_public_ip }}
+  wait_for: host="{{ instance_public_ip }}" port={{ ssh_port }}
+            delay=30  state=started
+
+- name: Adding instance to a specific host group
+  add_host: groups=instance_group hostname={{ instance_public_ip }}
+            ansible_user={{ ssh_username }} ansible_password={{ ssh_password }}
+            ansible)port={{ ssh_port }}
+            instance_public_ip={{ instance_public_ip }}

@@ -1,0 +1,5 @@
+- name: Installing Ansible from EPEL Repository (along with Azure modules)
+  command: pip install ansible[azure]
+
+- name: Installing Apache LibCloud (needed for GCE)
+  command: pip install apache-libcloud

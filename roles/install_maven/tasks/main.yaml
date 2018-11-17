@@ -1,0 +1,23 @@
+- name: "MAVEN: Create directory for Maven"
+  file: path={{ ansible_user_dir }}/java/tools/apache/maven/
+        state=directory
+
+- name: "MAVEN: Download Maven: {{ maven_version }}"
+  uri: url={{ maven_url }}
+       method=GET creates=True dest={{ ansible_user_dir }}/java/tools/apache/maven/apache-maven-{{ maven_version }}-bin.tar.gz
+
+- name: "MAVEN: Extracting Maven"
+  unarchive: src={{ ansible_user_dir }}/java/tools/apache/maven/apache-maven-{{ maven_version }}-bin.tar.gz
+             dest={{ ansible_user_dir }}/java/tools/apache/maven/
+             remote_src=True
+
+- name: "MAVEN: Symbolic link to Maven"
+  file: src={{ ansible_user_dir }}/java/tools/apache/maven/apache-maven-{{ maven_version }} state=link
+        dest={{ ansible_user_dir }}/java/tools/apache/maven/latest
+
+- name: "MAVEN: Deleting original file"
+  file: path={{ ansible_user_dir }}/java/tools/apache/maven/apache-maven-{{ maven_version }}-bin.tar.gz state=absent
+
+- name: "MAVEN: Making Maven wide available by defining {{ ansible_user_dir }}/.bashrc"
+  lineinfile: path={{ ansible_user_dir }}/.bashrc   regexp="^MAVEN_HOME="
+              line="MAVEN_HOME={{ ansible_user_dir }}/java/tools/apache/maven/latest" state=present insertafter=EOF
