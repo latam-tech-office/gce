@@ -1,0 +1,4 @@
+- name: "Delete instance: {{ instance_name }}"
+  gce: instance_names={{ instance_name }} zone={{ gce_zone }} state=absent
+       credentials_file={{ gce_credentials_file }}
+       project_id={{ gce_project_id }} service_account_email={{ gce_service_account_email }}

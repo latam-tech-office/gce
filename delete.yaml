@@ -1,0 +1,10 @@
+---
+- name: Deleting
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+     - instance.config
+  roles:
+     - { role: delete }
+  

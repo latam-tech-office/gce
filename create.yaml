@@ -7,3 +7,5 @@
      - instance.config
   roles: 
      - { role: create }
+  tasks:
+     - debug: "msg='instance_name: ssh root@{{ instance_creation.instance_data[0].public_ip }}'"

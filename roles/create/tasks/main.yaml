@@ -25,3 +25,5 @@
     service_account_email: "{{ gce_service_account_email }}"
   register: instance_creation
   tags: [ create, compute ]
+
+- debug: var=instance_creation
