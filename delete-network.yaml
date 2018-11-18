@@ -7,12 +7,11 @@
      - instance.config
   tasks:
     - name: "SECURITY GROUP: Deleting all Firewall Rules"
-      gce_net: name={{ gce_network_name }} state=absent fwname={{ item }}
+      gce_net: name={{ gce_network_name }} state=absent fwname={{ item.name }}
                subnet_name={{ gce_subnetwork_name }} subnet_region={{ gce_region }}
                credentials_file={{ gce_credentials_file }}
                project_id={{ gce_project_id }} service_account_email={{ gce_service_account_email }}
-      with_items: "{{ gce_network_firewall_rules ]}"
-      tags: [ delete_all, subnet ]
+      with_items: "{{ gce_network_firewall_rules }}"
 
     - name: "SUBNET: Deleting"
       gce_net: name={{ gce_network_name }} state=absent
@@ -20,10 +19,8 @@
                subnet_name={{ gce_subnetwork_name }} subnet_region={{ gce_region }}
                credentials_file={{ gce_credentials_file }}
                project_id={{ gce_project_id }} service_account_email={{ gce_service_account_email }}
-      tags: [ delete_all, subnet ]
 
     - name: "NETWORK: Deleting"
       gce_net: name={{ gce_network_name }} state=absent
                credentials_file={{ gce_credentials_file }}
                project_id={{ gce_project_id }} service_account_email={{ gce_service_account_email }}
-      tags: [ delete_all, network ]
