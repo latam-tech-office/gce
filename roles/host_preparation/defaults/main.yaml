@@ -1,5 +1,5 @@
 docker_storage: "/dev/sdb"
-docker_storage_partition: "{{ disk_storage }}1"
+docker_storage_partition: "{{ docker_storage }}1"
 packages:
     - vim
     - wget

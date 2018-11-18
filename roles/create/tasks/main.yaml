@@ -1,4 +1,4 @@
-- name: "Creating disk size: {{ instance_size }}"
+- name: "Creating disk size: {{ instance_size }}Gb - {{ instance_disk_type }}"
   gce_pd: name={{ instance_name }} state=present zone={{ gce_zone }}
           mode="READ_WRITE"
           image={{ gce_image }}
@@ -25,6 +25,20 @@
     service_account_email: "{{ gce_service_account_email }}"
   register: instance_creation
   tags: [ create, compute ]
+
+- name: "Attaching a Docker storage: {{ instance_docker_size }}Gb - {{ instance_docker_type }}"
+  gce_pd:
+    instance_name: "{{ instance_name }}"
+    name: "{{ instance_name }}-docker"
+    state: present
+    mode: READ_WRITE
+    disk_type: "{{ instance_docker_type }}"
+    size_gb: "{{ instance_docker_size }}"
+    delete_on_termination: True
+    zone: "{{ gce_zone }}"
+    project_id: "{{ gce_project_id }}"
+    credentials_file: "{{ gce_credentials_file }}"
+    service_account_email: "{{ gce_service_account_email }}"
 
 - name: Fetching Instance IP
   set_fact: instance_public_ip={{ instance_creation.instance_data[0].public_ip }}
