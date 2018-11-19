@@ -12,7 +12,7 @@
 
 - name: Setting Up
   hosts: instance_group
-  gather_facts: False
+  gather_facts: True
   vars_files:
      - instance.config
   roles:
