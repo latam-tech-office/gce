@@ -19,7 +19,8 @@
 
 - name: "Installing Applications"
   yum: name="{{ item }}" state=present
-  with_items: "{{ packages }}"
+  loop: "{{ packages | flatten(levels=1) }}"
+  tags: [ yum ]
 
 - name: Loading SSH KEY from localhost (if any)
   set_fact: ssh_key="{{ lookup('file','{{ ssh_key_file }}') }}"
