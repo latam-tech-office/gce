@@ -29,6 +29,9 @@
 - name: Copy a SSH Key (if does exist)
   lineinfile: dest=/root/.ssh/authorized_keys state=present create=yes line="{{ ssh_key }}"
   when: ssh_key_file is defined
+ 
+- name: "Create a partition for Docker: {{ docker_storage }}"
+  command: parted {{ docker_storage }} --script 'mklabel msdos mkpart primary 0% 100%'
 
 - name: "Create a VG named docker-vg (used for Docker): {{ docker_storage_partition }}"
   lvg: vg=docker-vg pvs={{ docker_storage_partition }}
@@ -43,8 +46,8 @@
 - name: "Run a Docker-Storage-Setup"
   command: /usr/bin/docker-storage-setup
 
-- name: "Execute a Atomic OpenShift Excluder"
-  command: atomic-openshift-excluder unexclude
+#- name: "Execute a Atomic OpenShift Excluder"
+#  command: atomic-openshift-excluder unexclude
 
 # https://docs.openshift.com/container-platform/latest/install_config/install/host_preparation.html#managing-docker-container-logs
 - name: "Setting Docker configuration with with the correct info"
