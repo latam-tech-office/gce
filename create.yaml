@@ -27,5 +27,7 @@
   gather_facts: False
   vars_files:
      - instance.config
+  roles:
+     - { role: notification_slack }
   tasks:
      - debug: "msg='instance_name: ssh {{ ssh_username }}@{{ instance_public_ip }}'"
