@@ -43,6 +43,9 @@
 - name: Fetching Instance IP
   set_fact: instance_public_ip={{ instance_creation.instance_data[0].public_ip }}
 
+- name: (LOCAL) Generating a inventory for debug purposes
+  local_action: template src=inventory_for_debug.j2 dest=inventory_for_debug
+
 - name: Waiting instance to be up{{ ':' }} {{ instance_public_ip }}
   wait_for: host="{{ instance_public_ip }}" port={{ ssh_port }}
             delay=30  state=started
